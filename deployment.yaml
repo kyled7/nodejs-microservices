@@ -1,0 +1,35 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nodejs-microservices-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-microservices-api
+  template:
+    metadata:
+      labels:
+        app: nodejs-microservices-api
+    spec:
+      containers:
+        - name: nodejs-microservices-api
+          image: localhost:5000/nodejs-microservices_api
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+      restartPolicy: Always
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nodejs-microservices-api
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      nodePort: 31000
+  selector:
+    app: nodejs-microservices-api
