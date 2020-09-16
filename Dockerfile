@@ -1,4 +1,4 @@
-FROM node:current-alpine3.9
+FROM node:current-alpine
 
 # Expose port and set work dir
 EXPOSE 3000

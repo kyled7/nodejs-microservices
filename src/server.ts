@@ -1,4 +1,4 @@
-import app from "./app";
-import { PORT } from "./constants";
+import app from "app";
+import { env } from "config";
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+app.listen(env.PORT, () => console.log(`Listening on port ${env.PORT}`));
