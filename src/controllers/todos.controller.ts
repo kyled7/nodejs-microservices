@@ -1,22 +1,59 @@
-import { Application } from 'express';
-import { TodoService } from './../services/todos.service';
+import { RequestHandler } from 'express';
+import { Todo } from '../models/todo.model';
+import { TodoService } from '../services/todos.service';
 
-export class TodoController {
-  private todoService: TodoService;
+const todoService = new TodoService(Todo);
 
-  constructor(private app: Application) {
-    this.todoService = new TodoService();
-    this.routes();
+export const listTodo: RequestHandler = async (req, res) => {
+  try {
+    const todos = await todoService.index();
+    res.json({ data: todos });
+  } catch (error) {
+    res.status(500).json({ error });
   }
+};
 
-  public routes() {
-    const service = this.todoService;
-    this.app.route('/')
-      .get(service.index)
-      .post(service.create);
-    this.app.route('/:id')
-      .get(service.read)
-      .put(service.update)
-      .delete(service.delete)
+export const createTodo: RequestHandler = async (req, res) => {
+  try {
+    const todo = await todoService.create(req.body);
+    res.json({ data: todo });
+  } catch (error) {
+    res.status(500).json({ error });
   }
-}
+};
+
+export const readTodo: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const todo = await todoService.read(id);
+    if (!todo) {
+      res.status(404).json({ error: 'NOT FOUND!' });
+    }
+    res.json({ data: todo });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+export const updateTodo: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const todo = await todoService.update(id, req.body);
+    if (!todo) {
+      res.status(404).json({ error: 'NOT FOUND!' });
+    }
+    res.json({ data: todo });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+export const deleteTodo: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await todoService.delete(id);
+    res.json({ data: true });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
